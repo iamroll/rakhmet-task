@@ -18,6 +18,18 @@ php artisan db:seed
 php artisan jwt:secret
 php artisan serve
 https://www.getpostman.com/collections/6aab01f90a56ebcdf369 - Postman.
+
+Admin
+ - login: admin@test.kz
+ - pass: 123
+ 
+Moderator
+ - login: moderator@test.kz
+ - pass: 123
+ 
+Guest
+ - login: guest@test.kz
+ - pass: 123
 ```
 <img src="https://user-images.githubusercontent.com/27915539/58758913-69c06e80-8544-11e9-855e-0b0c26905167.PNG" width="250" height="300">
 

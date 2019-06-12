@@ -9,26 +9,34 @@
 namespace App\Services;
 
 
+use Illuminate\Http\Request;
+
 class ProductFilterService
 {
     protected $builder;
-    protected $parameters;
+    protected $request;
 
-    public function __construct($builder, $parameters)
+    public function __construct(Request $request)
     {
-        $this->builder = $builder;
-        $this->parameters = $parameters;
+        $this->request = $request;
     }
 
-    public function filter()
+    public function filter($builder)
     {
-        foreach ($this->parameters as $filter => $parameter) {
+        $this->builder = $builder;
+
+        foreach ($this->filters() as $filter => $value) {
             if (method_exists($this, $filter)) {
-                $this->$filter($parameter);
+                $this->$filter($value);
             }
         }
 
         return $this->builder;
+    }
+
+    public function filters()
+    {
+        return $this->request->all();
     }
 
     public function price_from($value)

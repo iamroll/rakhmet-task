@@ -9,32 +9,53 @@ use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Resources\ProductResource;
 use App\Model\Product;
 use App\Model\ProductCategory;
-use App\Repositories\Product\ProductRepository;
-use App\Repositories\ProductCategory\ProductCategoryRepository;
+use App\Repositories\Product\ProductRepositoryInterface;
+use App\Repositories\ProductCategory\ProductCategoryRepositoryInterface;
 use App\Services\ProductCategoryInteractionService;
 use App\Services\ProductFilterService;
 
 class ProductController extends Controller
 {
-    private $productCategoryRepository;
-    private $productRepository;
-    private $productCategoryInteractionService;
+    /**
+     * ProductCategories repository.
+     *
+     * @var ProductCategoryRepositoryInterface
+     */
+    private $productCategories;
+
+    /**
+     * Product repository.
+     *
+     * @var ProductRepositoryInterface
+     */
+    private $products;
+
+    /**
+     * Product service.
+     *
+     * @var ProductCategoryInteractionService
+     */
+    private $productCategoryServices;
 
     /**
      * Create a new ProductController instance.
      *
-     * @return void
+     * @param ProductCategoryRepositoryInterface $productCategories
+     * @param ProductRepositoryInterface $products
+     * @param ProductCategoryInteractionService $productCategoryServices
      */
-    public function __construct()
-    {
+    public function __construct(
+        ProductCategoryRepositoryInterface $productCategories,
+        ProductRepositoryInterface $products,
+        ProductCategoryInteractionService $productCategoryServices
+    ) {
         parent::__construct();
         $this->middleware('permission',
             ['only' => ['store', 'update', 'destroy']]
         );
-        $this->productCategoryRepository = app(ProductCategoryRepository::class);
-        $this->productRepository = app(ProductRepository::class);
-        $this->productCategoryInteractionService =
-            app(ProductCategoryInteractionService::class);
+        $this->productCategories = $productCategories;
+        $this->products = $products;
+        $this->productCategoryServices = $productCategoryServices;
     }
 
     /**
@@ -49,7 +70,7 @@ class ProductController extends Controller
         $product = Product::create($data);
 
         // Create new product categories.
-        $this->productCategoryInteractionService
+        $this->productCategoryServices
             ->createProductCategories($product->id, $request['category_ids']);
 
         return response()
@@ -66,7 +87,7 @@ class ProductController extends Controller
      */
     public function update(ProductUpdateRequest $request, $id)
     {
-        $product = $this->productRepository->getEdit($id);
+        $product = $this->products->getEdit($id);
 
         if (empty($product)) {
             return response()
@@ -74,10 +95,8 @@ class ProductController extends Controller
         }
         $data = $request->except(['category_ids']);
         $product->update($data);
-        // Delete old product categories.
-        ProductCategory::where('product_id', $product->id)->delete();
         // Create new product categories.
-        $this->productCategoryInteractionService
+        $this->productCategoryServices
             ->createProductCategories($product->id, $request['category_ids']);
 
         return response()
@@ -88,8 +107,8 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
@@ -114,9 +133,9 @@ class ProductController extends Controller
     public function getProductsByCategory(CategoryCheckRequest $request)
     {
         $product_ids  = $this
-            ->productCategoryRepository
+            ->productCategories
             ->getProductIds($request['id']);
-        $products = $this->productRepository->getProducts($product_ids);
+        $products = $this->products->getProducts($product_ids);
 
         return ProductResource::collection($products);
     }
@@ -125,14 +144,13 @@ class ProductController extends Controller
      * Filter products by their properties.
      *
      * @param ProductFilterRequest $request
+     * @param ProductFilterService $filters
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function filter(ProductFilterRequest $request)
+    public function filter(ProductFilterRequest $request, ProductFilterService $filters)
     {
-        $products = $this->productRepository->getFilter();
+        $products = $this->products->getFilter()->filter($filters)->get();
 
-        $result = (new ProductFilterService($products, $request->all()))->filter()->get();
-
-        return ProductResource::collection($result);
+        return ProductResource::collection($products);
     }
 }

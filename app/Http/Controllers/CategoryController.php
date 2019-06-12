@@ -64,8 +64,7 @@ class CategoryController extends Controller
     {
         $category = $this->categoryRepository->getEdit($id);
 
-        if (empty($category))
-        {
+        if (empty($category)) {
             return response()
                 ->json(['error' => 'category not found'], 404);
         }

@@ -18,4 +18,9 @@ class Product extends Model
     {
         return $this->hasMany('App\Model\ProductCategory');
     }
+
+    public function scopeFilter($query, $filters)
+    {
+        return $filters->filter($query);
+    }
 }

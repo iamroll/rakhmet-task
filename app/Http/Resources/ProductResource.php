@@ -19,12 +19,12 @@ class ProductResource extends Resource
             ->productCategories()
             ->get();
 
-        // Get categories of product
+        // Get categories of product.
         $categories = [];
         foreach ($product_categories as $product_category) {
             $category = Category::where('id', $product_category->category_id)
                 ->first(['id', 'title']);
-            if ($category== null) continue;
+            if ($category == null) continue;
             $categories[] = $category;
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Traits\CustomErrorMessage;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CategoryCreateRequest extends FormRequest

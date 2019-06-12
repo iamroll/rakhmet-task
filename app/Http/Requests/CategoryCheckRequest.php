@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Model\Category;
+use App\Traits\CustomErrorMessage;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CategoryCheckRequest extends FormRequest

@@ -6,24 +6,30 @@ use App\Model\Category;
 use App\Http\Requests\CategoryCreateRequest;
 use App\Http\Requests\CategoryUpdateRequest;
 use App\Http\Resources\CategoryResource;
-use App\Repositories\Category\CategoryRepository;
+use App\Repositories\Category\CategoryRepositoryInterface;
 
 class CategoryController extends Controller
 {
-    private $categoryRepository;
+
+    /**
+     * Categories Repository.
+     *
+     * @var CategoryRepositoryInterface
+     */
+    private $categories;
 
     /**
      * Create a new CategoryController instance.
      *
-     * @return void
+     * @param CategoryRepositoryInterface $categories
      */
-    public function __construct()
+    public function __construct(CategoryRepositoryInterface $categories)
     {
         parent::__construct();
         $this->middleware('permission',
             ['only' => ['store', 'update', 'destroy']]
         );
-        $this->categoryRepository = app(CategoryRepository::class);
+        $this->categories = $categories;
     }
 
     /**
@@ -33,7 +39,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = $this->categoryRepository->getAll();
+        $categories = $this->categories->getAll();
 
         return CategoryResource::collection($categories);
     }
@@ -49,8 +55,7 @@ class CategoryController extends Controller
         $data = $request->all();
         $category = Category::create($data);
 
-        return response()
-            ->json($category, 201);
+        return response()->json($category, 201);
     }
 
     /**
@@ -62,18 +67,16 @@ class CategoryController extends Controller
      */
     public function update(CategoryUpdateRequest $request, $id)
     {
-        $category = $this->categoryRepository->getEdit($id);
+        $category = $this->categories->getEdit($id);
 
         if (empty($category)) {
-            return response()
-                ->json(['error' => 'category not found'], 404);
+            return response()->json(['error' => 'category not found'], 404);
         }
 
         $data = $request->all();
         $category->update($data);
 
-        return response()
-            ->json(['message' => 'OK'], 200);
+        return response()->json(['message' => 'OK'], 200);
 
     }
 
@@ -88,12 +91,10 @@ class CategoryController extends Controller
         $result = Category::destroy($id);
 
         if ($result) {
-            return response()
-                ->json(['message' => 'OK'], 200);
+            return response()->json(['message' => 'OK'], 200);
         }
         else {
-            return response()
-                ->json(['error' => 'category not found'], 404);
+            return response()->json(['error' => 'category not found'], 404);
         }
     }
 }

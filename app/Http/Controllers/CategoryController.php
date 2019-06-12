@@ -61,18 +61,12 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  CategoryUpdateRequest  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param CategoryUpdateRequest $request
+     * @param Category $category
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CategoryUpdateRequest $request, $id)
+    public function update(CategoryUpdateRequest $request, Category $category)
     {
-        $category = $this->categories->getEdit($id);
-
-        if (empty($category)) {
-            return response()->json(['error' => 'category not found'], 404);
-        }
-
         $data = $request->all();
         $category->update($data);
 
@@ -83,18 +77,14 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Category $category
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $result = Category::destroy($id);
+        $category->delete();
 
-        if ($result) {
-            return response()->json(['message' => 'OK'], 200);
-        }
-        else {
-            return response()->json(['error' => 'category not found'], 404);
-        }
+        return response()->json(['message' => 'OK'], 200);
     }
 }

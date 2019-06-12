@@ -18,3 +18,7 @@ Route::group([
     Route::post('login', 'AuthController@login');
 
 });
+
+Route::fallback(function(){
+    return response()->json(['message' => 'Not Found!'], 404);
+});

@@ -69,59 +69,42 @@ class ProductController extends Controller
         $data = $request->all();
         $product = Product::create($data);
 
-        // Create new product categories.
         $this->productCategoryServices
             ->createProductCategories($product->id, $request['category_ids']);
 
-        return response()
-            ->json(new ProductResource($product), 201);
-
+        return response()->json(new ProductResource($product), 201);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  ProductUpdateRequest  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param ProductUpdateRequest $request
+     * @param Product $product
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ProductUpdateRequest $request, $id)
+    public function update(ProductUpdateRequest $request, Product $product)
     {
-        $product = $this->products->getEdit($id);
-
-        if (empty($product)) {
-            return response()
-                ->json(['error' => 'product not found'], 404);
-        }
         $data = $request->except(['category_ids']);
         $product->update($data);
-        // Create new product categories.
+
         $this->productCategoryServices
             ->createProductCategories($product->id, $request['category_ids']);
 
-        return response()
-            ->json(['message' => 'OK'], 200);
-
+        return response()->json(['message' => 'OK'], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param $id
+     * @param Product $product
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        $result = Product::destroy($id);
+        $product->delete();
 
-        if ($result) {
-            return response()
-                ->json(['message' => 'OK'], 200);
-        }
-        else {
-            return response()
-                ->json(['error' => 'category not found'], 404);
-        }
+        return response()->json(['message' => 'OK'], 200);
     }
 
     /**

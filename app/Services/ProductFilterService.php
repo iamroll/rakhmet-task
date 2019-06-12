@@ -13,14 +13,32 @@ use Illuminate\Http\Request;
 
 class ProductFilterService
 {
+    /**
+     * @var $builder
+     */
     protected $builder;
+
+    /**
+     * @var Request
+     */
     protected $request;
 
+    /**
+     * ProductFilterService constructor.
+     *
+     * @param Request $request
+     */
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
+    /**
+     * Filters products by existing parameters.
+     *
+     * @param $builder
+     * @return mixed
+     */
     public function filter($builder)
     {
         $this->builder = $builder;

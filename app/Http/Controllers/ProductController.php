@@ -20,6 +20,11 @@ class ProductController extends Controller
     private $productRepository;
     private $productCategoryInteractionService;
 
+    /**
+     * Create a new ProductController instance.
+     *
+     * @return void
+     */
     public function __construct()
     {
         parent::__construct();
@@ -116,6 +121,12 @@ class ProductController extends Controller
         return ProductResource::collection($products);
     }
 
+    /**
+     * Filter products by their properties.
+     *
+     * @param ProductFilterRequest $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function filter(ProductFilterRequest $request)
     {
         $products = $this->productRepository->getFilter();

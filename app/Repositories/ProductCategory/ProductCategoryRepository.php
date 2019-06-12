@@ -12,6 +12,12 @@ class ProductCategoryRepository extends CoreRepository implements ProductCategor
         return Model::class;
     }
 
+    /**
+     * Get all products by category.
+     *
+     * @param $category_id
+     * @return array
+     */
     public function getProductIds($category_id)
     {
         $products = $this

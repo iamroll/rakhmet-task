@@ -7,11 +7,18 @@ use App\Repositories\CoreRepository;
 
 class ProductRepository extends CoreRepository implements ProductRepositoryInterface
 {
+
     protected function getModelClass()
     {
         return Model::class;
     }
 
+    /**
+     * Get products by given ids.
+     *
+     * @param $product_ids
+     * @return mixed
+     */
     public function getProducts($product_ids)
     {
         $products = $this
@@ -23,6 +30,12 @@ class ProductRepository extends CoreRepository implements ProductRepositoryInter
         return $products;
     }
 
+    /**
+     * Get product for editing.
+     *
+     * @param $id
+     * @return mixed
+     */
     public function getEdit($id)
     {
         $products = $this
@@ -34,6 +47,11 @@ class ProductRepository extends CoreRepository implements ProductRepositoryInter
         return $products;
     }
 
+    /**
+     * Get available products, return builder.
+     *
+     * @return mixed
+     */
     public function getFilter()
     {
         $products = $this

@@ -12,6 +12,11 @@ class CategoryRepository extends CoreRepository implements CategoryRepositoryInt
         return Model::class;
     }
 
+    /**
+     * Get all available categories.
+     *
+     * @return mixed
+     */
     public function getAll()
     {
         $categories = $this
@@ -22,6 +27,12 @@ class CategoryRepository extends CoreRepository implements CategoryRepositoryInt
         return $categories;
     }
 
+    /**
+     * Get category for editing.
+     *
+     * @param $id
+     * @return mixed
+     */
     public function getEdit($id)
     {
         $category = $this

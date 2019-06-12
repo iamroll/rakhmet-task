@@ -12,6 +12,11 @@ class CategoryController extends Controller
 {
     private $categoryRepository;
 
+    /**
+     * Create a new CategoryController instance.
+     *
+     * @return void
+     */
     public function __construct()
     {
         parent::__construct();

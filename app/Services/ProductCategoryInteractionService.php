@@ -7,6 +7,13 @@ use App\Model\ProductCategory;
 
 class ProductCategoryInteractionService
 {
+
+    /**
+     * Create ProductCategory.
+     *
+     * @param $product_id
+     * @param $category_ids
+     */
     public function createProductCategories($product_id, $category_ids)
     {
         foreach ($category_ids as $category) {
